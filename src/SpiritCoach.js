@@ -643,14 +643,21 @@ const [planHistory, setPlanHistory] = useState([]);
 const [currentPlan, setCurrentPlan] = useState(null);
 const [tab, setTab] = useState(“plan”);
 
-useEffect(() => {
-const p = loadData(“profile”, null);
-const r = loadData(“reflections”, []);
-const h = loadData(“plans”, []);
-if (p) setProfile(p); setReflections(r); setPlanHistory(h);
-if (h.length > 0 && new Date(h[h.length-1].date).toDateString() === new Date().toDateString()) setCurrentPlan(h[h.length-1]);
-setLoading(false);
-}, []);
+  useEffect(() => {
+    const p = loadData("profile", null);
+    const r = loadData("reflections", []);
+    const h = loadData("plans", []);
+    if (p) { setProfile(p); }
+    setReflections(r);
+    setPlanHistory(h);
+    if (h.length > 0) {
+      const latest = h[h.length - 1];
+      if (new Date(latest.date).toDateString() === new Date().toDateString()) {
+        setCurrentPlan(latest);
+      }
+    }
+    setLoading(false);
+  }, []);
 
 const setup = (p) => { setProfile(p); saveData(“profile”, p); setTab(“plan”); };
 const gen = () => { const p = generateAdaptivePlan(profile, reflections, planHistory); setCurrentPlan(p); const h = […planHistory, p]; setPlanHistory(h); saveData(“plans”, h); };
